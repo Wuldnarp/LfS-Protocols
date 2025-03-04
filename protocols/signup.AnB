@@ -1,0 +1,17 @@
+Protocol: SignUp
+
+Types:  Agent: User, Website, MitID;
+        Function: pk;
+        Symmetric_key: SymKeyWebsiteUser;
+
+Knowledge:
+            User: User, Website, MitID, pk(User), inv(pk(User)), pk(MitID)
+            Website: Website, User, MitID, pk(Website), inv(pk(Website)), pk(MitID)
+            MitID: MitID, Website, User, pk(Website), inv(pk(Website)), pk(Website)
+
+Actions:
+
+Goals:
+        Website authenticates MitID on SymKeyWebsiteUser, User
+        User authenticates MitID on SymKeyWebsiteUser, Website
+        SymKeyWebsiteUser secret between Website, User
