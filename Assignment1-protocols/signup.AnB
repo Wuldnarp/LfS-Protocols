@@ -1,0 +1,30 @@
+Protocol: SignUp
+
+Types:  Agent User, Website, mitID;
+        Number NUser, NWebSite, NmitID, Sid;
+        Function pk;
+
+Knowledge:
+            User: User, Website, mitID, pk(User), inv(pk(User)), pk(mitID);
+            Website: Website, User, mitID, pk(Website), inv(pk(Website)), pk(mitID), {Website, pk(Website)}inv(pk(mitID));
+            mitID: mitID, Website, User, pk(mitID), inv(pk(mitID)), pk(Website);
+
+Actions:
+
+#starts communication between User and Website
+User -> Website: User,NUser,Sid
+Website -> User: NWebSite,Sid, {Website, pk(Website)}inv(pk(mitID))
+
+#User gets MitID to sign the User's public key
+User -> mitID: User,Website,Sid,NUser,NWebSite,pk(User)
+mitID -> User: {User,Website,Sid,NUser,NWebSite,NmitID}pk(User)
+User -> mitID: {User,Website,Sid,NUser,NWebSite,NmitID}inv(pk(User))
+mitID -> User: {User, pk(User),User,Website,Sid,NUser,NWebSite,NmitID}inv(pk(mitID))
+
+#the user sends its signed public key to the Website 
+User -> Website:{User, pk(User),User,Website,Sid,NUser,NWebSite,NmitID}inv(pk(mitID))
+
+Goals:
+        Website weakly authenticates mitID on User
+        User authenticates mitID on Website
+        NmitID secret between Website, User, mitID
