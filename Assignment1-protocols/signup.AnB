@@ -1,30 +1,30 @@
 Protocol: SignUp
 
 Types:  Agent User, Website, mitID;
-        Number NUser, NWebSite, NmitID, Sid;
-        Function pk;
+        Number NUser, NWebSite,NWebSite2, NmitID, Sid;
+        Function pk, sk, pre;
 
 Knowledge:
-            User: User, Website, mitID, pk(User), inv(pk(User)), pk(mitID);
-            Website: Website, User, mitID, pk(Website), inv(pk(Website)), pk(mitID), {Website, pk(Website)}inv(pk(mitID));
-            mitID: mitID, Website, User, pk(mitID), inv(pk(mitID)), pk(Website);
+            User: User, Website, mitID, pk(User), inv(pk(User)), pk(mitID), sk(User,mitID), pre;
+            Website: Website, User, mitID, pk(Website), inv(pk(Website)), pk(mitID), sk(Website,mitID), pre;
+            mitID: mitID, Website, User, pk(mitID), inv(pk(mitID)), pk(Website), sk(User,mitID), sk(Website,mitID);
 
 Actions:
 
 #starts communication between User and Website
 User -> Website: User,NUser,Sid
-Website -> User: NWebSite,Sid, {Website, pk(Website)}inv(pk(mitID))
 
-#User gets MitID to sign the User's public key
-User -> mitID: User,Website,Sid,NUser,NWebSite,pk(User)
-mitID -> User: {User,Website,Sid,NUser,NWebSite,NmitID}pk(User)
-User -> mitID: {User,Website,Sid,NUser,NWebSite,NmitID}inv(pk(User))
-mitID -> User: {User, pk(User),User,Website,Sid,NUser,NWebSite,NmitID}inv(pk(mitID))
+Website -> mitID: {|Website, User, NUser, NWebSite, Sid|}sk(Website,mitID)
+mitID -> User: {|Website, User, NUser, NWebSite, Sid, NmitID|}sk(User,mitID)
+User -> mitID: {|Website, User, NUser, NWebSite, Sid, NmitID, pk(User)|}sk(User,mitID)
+mitID -> Website: {|Website, User, NUser, NWebSite, Sid, NmitID, pk(User)|}sk(Website,mitID)
 
-#the user sends its signed public key to the Website 
-User -> Website:{User, pk(User),User,Website,Sid,NUser,NWebSite,NmitID}inv(pk(mitID))
+
+Website -> User: {Website, User, NUser, NWebSite, Sid, NmitID, NWebSite2, pk(Website)}pk(User)
+User -> Website: {pre(NWebSite2)}pk(Website)
+
 
 Goals:
-        Website weakly authenticates mitID on User
+        Website authenticates mitID on User
         User authenticates mitID on Website
-        NmitID secret between Website, User, mitID
+        NWebSite2 secret between Website,User
