@@ -1,7 +1,7 @@
 Protocol: SignUp
 
 Types:  Agent User, Website, mitID;
-        Number NUser, NWebSite,NWebSite2, NmitID, Sid;
+        Number NUser, NWebSite,NWebSite2, NmitID,NmitID2,NmitID3,NmitID4, Sid, NUserWebsite;
         Function pk, sk, pre;
 
 Knowledge:
@@ -15,16 +15,22 @@ Actions:
 User -> Website: User,NUser,Sid
 
 Website -> mitID: {|Website, User, NUser, NWebSite, Sid|}sk(Website,mitID)
-mitID -> User: {|Website, User, NUser, NWebSite, Sid, NmitID|}sk(User,mitID)
-User -> mitID: {|Website, User, NUser, NWebSite, Sid, NmitID, pk(User)|}sk(User,mitID)
-mitID -> Website: {|Website, User, NUser, NWebSite, Sid, NmitID, pk(User)|}sk(Website,mitID)
+mitID -> Website: {|NmitID|}sk(Website,mitID)
+Website -> mitID: {pre(NmitID)}pk(mitID)
+
+mitID -> User: {|NmitID2|}sk(User,mitID)
+User -> mitID: {NmitID2}pk(mitID) 
+mitID -> User: {|Website, User, NUser, NWebSite, Sid, NmitID3|}sk(User,mitID)
+
+User -> mitID: {|Website, User, NUser, NWebSite, Sid, NmitID3, pk(User)|}sk(User,mitID)
+mitID -> Website: {|Website, User, NUser, NWebSite, Sid, NmitID3, pk(User),NmitID4|}sk(Website,mitID)
 
 
-Website -> User: {Website, User, NUser, NWebSite, Sid, NmitID, NWebSite2, pk(Website)}pk(User)
-User -> Website: {pre(NWebSite2)}pk(Website)
+Website -> User: {Website, User, NUser, NWebSite, Sid, NmitID3, NmitID4, NUserWebsite, pk(Website)}pk(User)
+User -> Website: {pre(NUserWebsite)}pk(Website)
 
 
 Goals:
         Website authenticates mitID on User
         User authenticates mitID on Website
-        NWebSite2 secret between Website,User
+        NUserWebsite secret between Website,User
