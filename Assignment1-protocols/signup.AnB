@@ -1,36 +1,35 @@
 Protocol: SignUp
 
-Types:  Agent User, Website, mitID;
-        Number NUser, NWebSite,NWebSite2, NmitID,NmitID2,NmitID3,NmitID4, Sid, NUserWebsite;
-        Function pk, sk, pre;
+Types: Agent User, Website, mitID;
+
+Number NUser, NWebSite, NmitID, Password;
+
+Function pk, pre;
+
+Symmetric_key NUserWebsite;
 
 Knowledge:
-            User: User, Website, mitID, pk(User), inv(pk(User)), pk(mitID), sk(User,mitID), pre;
-            Website: Website, User, mitID, pk(Website), inv(pk(Website)), pk(mitID), sk(Website,mitID), pre;
-            mitID: mitID, Website, User, pk(mitID), inv(pk(mitID)), pk(Website), sk(User,mitID), sk(Website,mitID);
+User: User, Website, mitID, pk(User), inv(pk(User)), pk(mitID), pre;
+Website: Website, User, mitID, pk(Website), inv(pk(Website)), pk(mitID), pre;
+mitID: mitID, Website, User, pk(mitID), inv(pk(mitID)), pk(Website);
 
 Actions:
 
 #starts communication between User and Website
-User -> Website: User,NUser,Sid
+Website -> User: User,Website,NWebSite
+User -> mitID: {|User,Website,NUser,NWebSite,pk(User)|}pk(mitID)
+  
+mitID -> User: {|NmitID|}pk(User)
+User -> mitID: {|NmitID|}pk(mitID)
 
-Website -> mitID: {|Website, User, NUser, NWebSite, Sid|}sk(Website,mitID)
-mitID -> Website: {|NmitID|}sk(Website,mitID)
-Website -> mitID: {pre(NmitID)}pk(mitID)
+mitID -> User: {|NUserWebsite,User,Website,NUser|}pk(User), {|NUserWebsite, User,Website,NWebSite|}pk(Website)
+User -> Website: {|NUserWebsite, User,Website,NWebSite|}pk(Website)
 
-mitID -> User: {|NmitID2|}sk(User,mitID)
-User -> mitID: {NmitID2}pk(mitID) 
-mitID -> User: {|Website, User, NUser, NWebSite, Sid, NmitID3|}sk(User,mitID)
-
-User -> mitID: {|Website, User, NUser, NWebSite, Sid, NmitID3, pk(User)|}sk(User,mitID)
-mitID -> Website: {|Website, User, NUser, NWebSite, Sid, NmitID3, pk(User),NmitID4|}sk(Website,mitID)
-
-
-Website -> User: {Website, User, NUser, NWebSite, Sid, NmitID3, NmitID4, NUserWebsite, pk(Website)}pk(User)
-User -> Website: {pre(NUserWebsite)}pk(Website)
-
+Website -> User: {|Password|}NUserWebsite
+User -> Website: {|pre(Password)|}NUserWebsite 
 
 Goals:
-        Website authenticates mitID on User
-        User authenticates mitID on Website
-        NUserWebsite secret between Website,User
+Website authenticates mitID on NUserWebsite,User
+User authenticates mitID on NUserWebsite,Website
+NUserWebsite secret between Website,User,mitID
+Password secret between Website,User
