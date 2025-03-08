@@ -15,7 +15,10 @@ Actions:
 #starts communication between User and Website
 
 Website -> User: User,Website,NWebSite
-User -> mitID: {|User,Website,NUser,NWebSite|}sk(User,mitID) 
+User -> mitID: {|User,Website,NUser,NWebSite|}sk(User,mitID)
+
+mitID -> User: {|NmitID|}sk(User,mitID)
+User -> mitID: {|pre(NmitID)|}pk(mitID)
 
 mitID -> User: {|NUserWebsite,User,Website,NUser|}sk(User,mitID), {|NUserWebsite, User,Website,NWebSite|}pk(Website)
 User -> Website: {|NUserWebsite, User,Website,NWebSite|}pk(Website)
