@@ -1,9 +1,23 @@
 Protocol: Search
 
-Types:
+Types:  Agent User, Website;
+        Number Query, Result, X, Y, g, CUser, CWebsite;
+        Function pk, pre;
 
-Knowledge:
+Knowledge:  User: User, Website, pk(User), inv(pk(User)), pk(Website), pre, g;
+            Website: Website, User, pk(Website),inv(pk(Website)), pk(User), pre, g;
 
 Actions:
 
+User -> Website: {User,Website,exp(g,X)}pk(Website)
+Website -> User: {User,Website,exp(g,Y)}pk(User)
+
+User -> Website: {|User,Website,Query|}exp(exp(g,X),Y)
+Website -> User: {|User,Website,Result|}exp(exp(g,X),Y)
+
 Goals:
+        User authenticates Website on Query
+        Website authenticates User on Result
+        exp(exp(g,X),Y) secret between User,Website
+        Query secret between User,Website
+        Result secret between User,Website
