@@ -9,7 +9,14 @@ Knowledge:  User: User, Website, pk(User), inv(pk(User)), pk(Website), pre, g;
 
 Actions:
 
+User -> Website: {User,CUser}pk(Website)
+Website -> User: {|pre(CUser),User|}pk(User)
+
 User -> Website: {User,Website,exp(g,X)}pk(Website)
+
+Website -> User: {Website, CWebsite}pk(User)
+User -> Website: {|pre(CWebsite)|}pk(Website)
+
 Website -> User: {User,Website,exp(g,Y)}pk(User)
 
 User -> Website: {|User,Website,Query|}exp(exp(g,X),Y)
