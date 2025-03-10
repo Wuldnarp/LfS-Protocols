@@ -1,33 +1,31 @@
 Protocol: SignUp
 
 Types: Agent User, Website, mitID;
-Number NUser, NWebSite, NmitID, Password;
+Number NUser,NUser2, NWebSite,NWebSite2,NWebSite3, NmitID,NmitID2, g,X,Y, Password;
 Function pk, sk, pre;
-Symmetric_key NUserWebsite;
 
 Knowledge:
 User: User, Website, mitID, pk(User), inv(pk(User)), pk(mitID), pre, sk(User,mitID);
 Website: Website, User, mitID, pk(Website), inv(pk(Website)), pk(mitID), pre;
-mitID: mitID, Website, User, pk(mitID), inv(pk(mitID)), pk(Website), sk(User,mitID);  
+mitID: mitID, Website, User, pk(mitID), inv(pk(mitID)), pk(Website), pre, sk(User,mitID);
+where User!=Website
 
 Actions:
 
 #starts communication between User and Website
 
-Website -> User: User,Website,NWebSite
-User -> mitID: {|User,Website,NUser,NWebSite|}sk(User,mitID)
+Website -> User: User,Website,{NWebSite}pk(mitID)
 
-mitID -> User: {|NmitID|}sk(User,mitID)
-User -> mitID: {|pre(NmitID)|}pk(mitID)
+User -> mitID: {User,Website,NUser,{NWebSite}pk(mitID)}pk(mitID)
+mitID -> User: {|User,Website,NUser,NmitID|}sk(User,mitID)
+User -> mitID: {|pre(NmitID)|}pk(mitID),{pk(User)}pk(mitID)
+mitID -> User: {{{User,Website,NUser,NmitID,pk(Website)}inv(pk(mitID))}pk(User),{{User,Website,NUser,NmitID,NWebSite,pk(User)}inv(pk(mitID))}pk(Website)}pk(User)
 
-mitID -> User: {|NUserWebsite,User,Website,NUser|}sk(User,mitID), {|NUserWebsite, User,Website,NWebSite|}pk(Website)
-User -> Website: {|NUserWebsite, User,Website,NWebSite|}pk(Website)
-
-Website -> User: {|Password|}NUserWebsite
-User -> Website: {|pre(Password)|}NUserWebsite
+User -> Website: {{User,Website,NUser,NmitID,NWebSite,pk(User)}inv(pk(mitID))}pk(Website)
+Website -> User: {User,Website,NUser,NmitID,NWebSite,NWebSite2}pk(User)
+User -> Website: {|pre(NWebSite)|}pk(Website)
 
 Goals:
-Website authenticates mitID on NUserWebsite,User
-User authenticates mitID on NUserWebsite,Website
-NUserWebsite secret between Website,User,mitID
-Password secret between Website,User
+Website authenticates mitID on User
+User authenticates mitID on Website
+NWebSite secret between Website,User

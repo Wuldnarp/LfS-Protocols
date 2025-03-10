@@ -1,7 +1,7 @@
 Protocol: UploadOffer
 
 Types:  Agent User, Website;
-        Number Offer,NUser,CWebsite;
+        Number Product,NUser,CWebsite;
         Function pk, pre, hash;
 
 Knowledge:  User: User, Website, pk(User), inv(pk(User)), pk(Website), pre, hash;
@@ -9,13 +9,13 @@ Knowledge:  User: User, Website, pk(User), inv(pk(User)), pk(Website), pre, hash
 
 Actions:
 
-User -> Website: {{User,Offer,NUser}inv(pk(User))}pk(Website)
+User -> Website: {{User,Product,NUser}inv(pk(User))}pk(Website)
 
-Website -> User: {{User,Offer,NUser,CWebsite}inv(pk(Website))}pk(User)
+Website -> User: {{User,Product,NUser,CWebsite,pk(User)}inv(pk(Website))}pk(User)
 User -> Website: {|pre(CWebsite)|}pk(User)
 
-Website -> User: {hash(User,Offer,NUser,CWebsite)}pk(User)
+Website -> User: {{User,Product,pk(User),hash(User,Product,pk(User))}inv(pk(Website))}pk(User)
 
 Goals:
-    Website authenticates User on Offer
-    User authenticates Website on Offer
+    Website authenticates User on hash(User,Product,pk(User))
+    User authenticates Website on hash(User,Product,pk(User))
