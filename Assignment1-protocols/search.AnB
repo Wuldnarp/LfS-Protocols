@@ -1,30 +1,26 @@
 Protocol: Search
 
 Types:  Agent User, Website;
-        Number Query, Result, X, Y, g, CUser, CWebsite;
+        Number Query, Result, X, Y, g, NUser,NUser2,NUser3, NWebSite,NWebSite2;
         Function pk, pre;
 
-Knowledge:  User: User, Website, pk(User), inv(pk(User)), pk(Website), pre, g;
-            Website: Website, User, pk(Website),inv(pk(Website)), pk(User), pre, g;
+Knowledge:  User: User, Website, pk(User), inv(pk(User)), pk(Website), g, pre;
+            Website: Website, User, pk(Website),inv(pk(Website)), pk(User), g, pre;
 
 Actions:
 
-User -> Website: {User,CUser}pk(Website)
-Website -> User: {|pre(CUser),User|}pk(User)
+Website -> User: {Website,NWebSite}pk(User)
+User -> Website: {User,NWebSite,NUser}pk(Website)
+Website -> User: {|pre(NUser)|}pk(Website)
 
-User -> Website: {User,Website,exp(g,X)}pk(Website)
+User -> Website: {User,Website,NWebSite,NUser,NUser2, exp(g,X)}pk(Website)
+Website -> User: {User,Website,NWebSite,NUser,NUser2,NWebSite2, exp(g,Y)}pk(User)
 
-Website -> User: {Website, CWebsite}pk(User)
-User -> Website: {|pre(CWebsite)|}pk(Website)
-
-Website -> User: {User,Website,exp(g,Y)}pk(User)
-
-User -> Website: {|User,Website,Query|}exp(exp(g,X),Y)
-Website -> User: {|User,Website,Result|}exp(exp(g,X),Y)
+User -> Website: {|User,Website,NWebSite,NUser,NUser2,NWebSite2,NUser3, Query|}exp(exp(g,X),Y)
+Website -> User: {|User,Website,NWebSite,NUser,NUser2,NWebSite2,NUser3,NWebSite3, Result|}exp(exp(g,X),Y)
+User -> Website: {|pre(Result)|}exp(exp(g,X),Y)
 
 Goals:
         User authenticates Website on Query
         Website authenticates User on Result
-        exp(exp(g,X),Y) secret between User,Website
-        Query secret between User,Website
-        Result secret between User,Website
+        exp(exp(g,X),Y),Query,Result secret between User,Website
