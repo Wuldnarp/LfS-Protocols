@@ -32,4 +32,4 @@ Website -> User: {|Secret|}exp(exp(g,X),Y)
 Goals:
 Website authenticates s on User,KUserWebsite
 User authenticates s on Website,KUserWebsite
-Secret secret between User,Website
+Secret,exp(exp(g,X),Y) secret between User,Website
