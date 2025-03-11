@@ -10,7 +10,6 @@ Knowledge:
 User: User, Website, s, pk(User), inv(pk(User)), pk(s), pre,g, sk(User,s);
 Website: Website, User, s, pk(Website), inv(pk(Website)), pk(s), pre,g, {Website,pk(Website)}inv(pk(s));
 s: s, Website, User, pk(s), inv(pk(s)), pk(Website), pre, sk(User,s);
-where User!=Website
 
 Actions:
 #starts communication between User and Website

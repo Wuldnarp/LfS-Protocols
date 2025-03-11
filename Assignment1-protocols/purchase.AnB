@@ -1,24 +1,35 @@
 Protocol: Purchase
 
-Types:  Agent Merchant,Buyer;
-        Number Product,Offer,Accept, NBuyer,NMerchant, X,Y,g;
-        Function pk,hash;
-        Symmetric_key KBM
+Types:  Agent Merchant,Buyer, Website;
+        Number Product,Offer,Accept, NBuyer,NBuyer2,NMerchant,NMerchant2,CWebSite, X,Y,g;
+        Function pk,hash,pre;
 
 Knowledge:
-        Merchant: Merchant, pk(Merchant),inv(pk(Merchant)),g,hash;
-        Buyer: Buyer,Merchant, pk(Buyer), inv(pk(Buyer)),pk(Merchant),g,hash;
+        Merchant: Merchant,Website, pk(Merchant),inv(pk(Merchant)),pk(Website),g,hash,pre;
+        Buyer: Buyer,Website, pk(Buyer), inv(pk(Buyer)),pk(Website),g,hash,pre;
+        Website: Website,Buyer,Merchant, pk(Website),inv(pk(Website)),pk(Buyer),pk(Merchant),hash,pre;
 
 Actions:
 
-Buyer -> Merchant: {KBM,Buyer,Product}pk(Merchant)
-Merchant -> Buyer: {|Merchant,Product,NMerchant, exp(g,X)|}KBM
-Buyer -> Merchant: {|Merchant,Product,NMerchant,NBuyer, exp(g,Y)|}pk(Merchant)
+Website -> Buyer: {Website,NWebSite}pk(Buyer)
+Buyer -> Website: {Buyer,NWebSite,NBuyer}pk(Website)
+Website -> Buyer: {|pre(NBuyer)|}pk(Website)
 
-Merchant -> Buyer: {|Merchant,Product|}exp(exp(g,X),Y)
-Buyer -> Merchant: {|pk(Buyer),{Merchant,Product,Offer}inv(pk(Buyer))|}exp(exp(g,X),Y)
-Merchant -> Buyer: {|{Merchant,Product,Offer,Accept}inv(pk(Merchant)),hash({Merchant,Product,Offer,Accept}inv(pk(Merchant)))|}exp(exp(g,X),Y)
+Buyer -> Website: {Buyer,Website,NWebSite,NBuyer,Product}pk(Website)
+Website -> Buyer: {Buyer,Website,NWebSite,NBuyer,Product,NWebSite2,{Merchant,pk(Merchant)}inv(pk(Website))}pk(Buyer),{Buyer,Website,NWebSite,NBuyer,Product,NWebSite2,{Buyer,pk(Buyer)}inv(pk(Website))}pk(Merchant) 
+
+Buyer -> Merchant: {Buyer,Website,NWebSite,NBuyer,Product,NWebSite2,{Buyer,pk(Buyer)}inv(pk(Website))}pk(Merchant) 
+Merchant -> Buyer: {Merchant,Buyer,Product,NMerchant}pk(Buyer)
+Buyer -> Merchant: {|pre(NMerchant)|}pk(Merchant)
+
+#Merchant -> Buyer: {Merchant,Buyer,Product,NMerchant,NMerchant2, exp(g,X)}pk(Buyer)
+#Buyer -> Merchant: {Merchant,Buyer,Product,NMerchant,NMerchant2,NBuyer2, exp(g,Y)}pk(Merchant)
+
+#Merchant -> Buyer: {|Merchant,Product|}exp(exp(g,X),Y)
+#Buyer -> Merchant: {|{Merchant,Product,Offer}inv(pk(Buyer))|}exp(exp(g,X),Y)
+#Merchant -> Buyer: {|{Merchant,Product,Offer,Accept}inv(pk(Merchant)),hash({Merchant,Product,Offer,Accept}inv(pk(Merchant)))|}exp(exp(g,X),Y)
 
 Goals:
-    Merchant authenticates Buyer on Product
-    exp(exp(g,X),Y),Offer secret between Buyer,Merchant
+        Buyer authenticates Website on Merchant,Product
+        Merchant authenticates Website on Buyer,Product
+        #exp(exp(g,X),Y),Offer secret between Buyer,Merchant
