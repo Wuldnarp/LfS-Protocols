@@ -16,8 +16,8 @@ Website -> User: {|pre(NUser)|}pk(Website)
 User -> Website: {User,Website,NWebSite,NUser,NUser2, exp(g,X)}pk(Website)
 Website -> User: {User,Website,NWebSite,NUser,NUser2,NWebSite2, exp(g,Y)}pk(User)
 
-User -> Website: {|User,Website,NWebSite,NUser,NUser2,NWebSite2,NUser3, Query|}exp(exp(g,X),Y)
-Website -> User: {|User,Website,NWebSite,NUser,NUser2,NWebSite2,NUser3,NWebSite3, Result|}exp(exp(g,X),Y)
+User -> Website: {|User, Query|}exp(exp(g,X),Y)
+Website -> User: {|Website, Result|}exp(exp(g,X),Y)
 User -> Website: {|pre(Result)|}exp(exp(g,X),Y)
 
 Goals:
